@@ -154,7 +154,7 @@ const ProductDetail = () => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <FileCheck className="w-4 h-4 text-accent" />
-                  <span>30-Day Money Back</span>
+                  <span>Satisfaction Guaranteed</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Download className="w-4 h-4 text-accent" />
