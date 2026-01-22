@@ -147,7 +147,7 @@ const ProductDetail = () => {
               </Button>
 
               {/* Trust Indicators */}
-              <div className="flex flex-wrap gap-4 mb-8">
+              <div className="flex items-center gap-6 mb-8">
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <ShieldCheck className="w-4 h-4 text-accent" />
                   <span>Secure Payment</span>
