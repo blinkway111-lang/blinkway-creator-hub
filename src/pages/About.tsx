@@ -4,33 +4,25 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Target, Sparkles, Heart } from "lucide-react";
 import aboutLogo from "@/assets/about-logo.png";
-
-const values = [
-  {
-    icon: Zap,
-    title: "Speed",
-    description: "We believe in fast execution. Every product is designed to help you move quickly without sacrificing quality.",
-  },
-  {
-    icon: Target,
-    title: "Simplicity",
-    description: "No complicated setups or steep learning curves. Our products work right out of the box.",
-  },
-  {
-    icon: Sparkles,
-    title: "Quality",
-    description: "We obsess over details. Every template, guide, and tool is crafted to deliver exceptional results.",
-  },
-  {
-    icon: Heart,
-    title: "Innovation",
-    description: "We stay ahead of the curve, constantly updating our products with the latest tools and strategies.",
-  },
-];
-
+const values = [{
+  icon: Zap,
+  title: "Speed",
+  description: "We believe in fast execution. Every product is designed to help you move quickly without sacrificing quality."
+}, {
+  icon: Target,
+  title: "Simplicity",
+  description: "No complicated setups or steep learning curves. Our products work right out of the box."
+}, {
+  icon: Sparkles,
+  title: "Quality",
+  description: "We obsess over details. Every template, guide, and tool is crafted to deliver exceptional results."
+}, {
+  icon: Heart,
+  title: "Innovation",
+  description: "We stay ahead of the curve, constantly updating our products with the latest tools and strategies."
+}];
 const About = () => {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Navbar />
       <main className="pt-24">
         {/* Hero */}
@@ -39,7 +31,7 @@ const About = () => {
           
           <div className="container mx-auto px-4 lg:px-8 relative">
             <div className="max-w-3xl">
-              <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-semibold mb-6">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-semibold mb-6 text-center">
                 About Blinkway
               </span>
               <h1 className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
@@ -153,8 +145,7 @@ const About = () => {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-              {values.map((value, index) => (
-                <div key={index} className="bg-card rounded-2xl p-6 border border-border">
+              {values.map((value, index) => <div key={index} className="bg-card rounded-2xl p-6 border border-border">
                   <div className="w-12 h-12 rounded-xl gradient-cta flex items-center justify-center mb-5 shadow-glow">
                     <value.icon className="w-6 h-6 text-accent-foreground" />
                   </div>
@@ -164,8 +155,7 @@ const About = () => {
                   <p className="text-muted-foreground text-sm">
                     {value.description}
                   </p>
-                </div>
-              ))}
+                </div>)}
             </div>
           </div>
         </section>
@@ -191,8 +181,6 @@ const About = () => {
         </section>
       </main>
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default About;
