@@ -21,9 +21,6 @@ const footerLinks = {
   }, {
     name: "Testimonials",
     href: "/testimonials"
-  }, {
-    name: "Resources",
-    href: "/resources"
   }],
   legal: [{
     name: "Privacy Policy",
