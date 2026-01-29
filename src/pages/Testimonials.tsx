@@ -106,10 +106,7 @@ const Testimonials = () => {
                 <div className="font-heading font-bold text-4xl text-accent mb-2">98%</div>
                 <div className="text-muted-foreground">Satisfaction Rate</div>
               </div>
-              <div className="bg-card rounded-2xl p-6 border border-border text-center">
-                <div className="font-heading font-bold text-4xl text-accent mb-2">50+</div>
-                <div className="text-muted-foreground">Products</div>
-              </div>
+              
             </div>
           </div>
         </section>
