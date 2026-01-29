@@ -12,9 +12,11 @@ import Testimonials from "./pages/Testimonials";
 import About from "./pages/About";
 import Resources from "./pages/Resources";
 import NotFound from "./pages/NotFound";
+import Contact from "./pages/Contact";
 import PrivacyPolicy from "./pages/policies/PrivacyPolicy";
 import TermsOfService from "./pages/policies/TermsOfService";
 import RefundPolicy from "./pages/policies/RefundPolicy";
+import ShippingPolicy from "./pages/policies/ShippingPolicy";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,8 @@ function AppContent() {
         <Route path="/policies/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/policies/terms-of-service" element={<TermsOfService />} />
         <Route path="/policies/refund-policy" element={<RefundPolicy />} />
+        <Route path="/policies/shipping-policy" element={<ShippingPolicy />} />
+        <Route path="/pages/contact" element={<Contact />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

@@ -34,6 +34,12 @@ const footerLinks = {
   }, {
     name: "Refund Policy",
     href: "/policies/refund-policy"
+  }, {
+    name: "Shipping Policy",
+    href: "/policies/shipping-policy"
+  }, {
+    name: "Contact Us",
+    href: "/pages/contact"
   }]
 };
 export function Footer() {
