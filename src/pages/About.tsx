@@ -78,8 +78,8 @@ const About = () => {
                 </div>
                 <div className="relative">
                   <div className="aspect-square rounded-3xl gradient-hero flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-2xl gradient-cta flex items-center justify-center shadow-glow animate-float">
-                      <img src={aboutLogo} alt="Blinkway Logo" className="w-12 h-12 object-contain" />
+                  <div className="w-36 h-36 rounded-3xl gradient-cta flex items-center justify-center shadow-glow animate-float">
+                      <img src={aboutLogo} alt="Blinkway Logo" className="w-20 h-20 object-contain" />
                     </div>
                   </div>
                 </div>
