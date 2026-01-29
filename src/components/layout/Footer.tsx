@@ -27,13 +27,13 @@ const footerLinks = {
   }],
   legal: [{
     name: "Privacy Policy",
-    href: "/privacy"
+    href: "/policies/privacy-policy"
   }, {
-    name: "Terms & Conditions",
-    href: "/terms"
+    name: "Terms of Service",
+    href: "/policies/terms-of-service"
   }, {
     name: "Refund Policy",
-    href: "/refunds"
+    href: "/policies/refund-policy"
   }]
 };
 export function Footer() {
