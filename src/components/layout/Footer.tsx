@@ -54,8 +54,8 @@ export function Footer() {
             </p>
             <div className="flex items-center gap-2 text-sm text-primary-foreground/70">
               <Mail className="w-4 h-4" />
-              <a href="mailto:hello@blinkway.com" className="hover:text-accent transition-colors">
-                hello@blinkway.com
+              <a href="mailto:support@blinkway.org" className="hover:text-accent transition-colors">
+                support@blinkway.org
               </a>
             </div>
           </div>
