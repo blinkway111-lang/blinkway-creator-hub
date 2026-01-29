@@ -42,7 +42,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand Column */}
           <div className="lg:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-4 text-center">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center">
               <img src={logoWhite} alt="Blinkway Logo" className="w-12 h-12 object-contain" />
             </div>
