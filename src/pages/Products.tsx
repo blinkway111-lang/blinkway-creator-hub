@@ -3,130 +3,28 @@ import { Link } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Filter, Bot, FileText, Settings, Palette, Wrench, Sparkles, TrendingUp } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-
-interface Product {
-  id: string;
-  title: string;
-  description: string;
-  price: string;
-  originalPrice?: string;
-  category: string;
-  categoryId: string;
-  icon: LucideIcon;
-  popular?: boolean;
-  new?: boolean;
-}
-
-const allProducts: Product[] = [
-  {
-    id: "1",
-    title: "AI Prompt Mastery Pack",
-    description: "500+ high-converting prompts for ChatGPT, Claude, and more.",
-    price: "₹999",
-    category: "AI Templates",
-    categoryId: "ai-templates",
-    icon: Bot,
-    popular: true,
-  },
-  {
-    id: "2",
-    title: "SaaS Launch Blueprint",
-    description: "Complete framework to validate, build, and launch your SaaS.",
-    price: "₹1,499",
-    category: "Business PDFs",
-    categoryId: "business-pdfs",
-    icon: TrendingUp,
-  },
-  {
-    id: "3",
-    title: "Notion Automation Hub",
-    description: "Ready-to-use Notion templates with built-in automation.",
-    price: "₹799",
-    category: "Automation",
-    categoryId: "automation",
-    icon: Settings,
-  },
-  {
-    id: "4",
-    title: "Content Creator Toolkit",
-    description: "Templates, calendars, and frameworks for content creation.",
-    price: "₹599",
-    category: "Creator Toolkits",
-    categoryId: "creator-toolkits",
-    icon: Palette,
-  },
-  {
-    id: "5",
-    title: "Digital Marketing Playbook",
-    description: "Proven strategies and templates for growing your audience.",
-    price: "₹1,299",
-    category: "Business PDFs",
-    categoryId: "business-pdfs",
-    icon: FileText,
-  },
-  {
-    id: "6",
-    title: "AI Workflow Automations",
-    description: "Pre-built AI workflows for common business tasks.",
-    price: "₹1,199",
-    category: "AI Templates",
-    categoryId: "ai-templates",
-    icon: Sparkles,
-    popular: true,
-  },
-  {
-    id: "7",
-    title: "Landing Page Templates",
-    description: "High-converting landing page designs and copy templates.",
-    price: "₹899",
-    originalPrice: "₹1,299",
-    category: "SaaS Tools",
-    categoryId: "saas-tools",
-    icon: Wrench,
-    new: true,
-  },
-  {
-    id: "8",
-    title: "Email Marketing Swipe File",
-    description: "200+ proven email templates that convert subscribers.",
-    price: "₹699",
-    category: "Business PDFs",
-    categoryId: "business-pdfs",
-    icon: FileText,
-  },
-  {
-    id: "9",
-    title: "Social Media Scheduler",
-    description: "Plan and schedule your content across all platforms.",
-    price: "₹449",
-    category: "Creator Toolkits",
-    categoryId: "creator-toolkits",
-    icon: Palette,
-    new: true,
-  },
-];
+import { ArrowRight, Search, Loader2, ShoppingBag } from "lucide-react";
+import { useShopifyProducts, ShopifyProduct } from "@/hooks/useShopifyProducts";
+import { useCartStore } from "@/stores/cartStore";
+import { toast } from "sonner";
 
 const categoryFilters = [
   { id: "all", name: "All Products" },
-  { id: "ai-templates", name: "AI Templates" },
-  { id: "saas-tools", name: "SaaS Tools" },
-  { id: "business-pdfs", name: "Business PDFs" },
-  { id: "automation", name: "Automation" },
-  { id: "creator-toolkits", name: "Creator Toolkits" },
+  { id: "digital-solution", name: "Digital Solutions" },
 ];
 
 const Products = () => {
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const { data: products, isLoading, error } = useShopifyProducts(20);
 
-  const filteredProducts = allProducts.filter((product) => {
-    const matchesCategory = activeFilter === "all" || product.categoryId === activeFilter;
-    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredProducts = products?.filter((product) => {
+    const matchesSearch = 
+      product.node.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.node.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
+  }) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -181,10 +79,18 @@ const Products = () => {
         {/* Products Grid */}
         <section className="pb-24">
           <div className="container mx-auto px-4 lg:px-8">
-            {filteredProducts.length > 0 ? (
+            {isLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-8 h-8 animate-spin text-accent" />
+              </div>
+            ) : error ? (
+              <div className="text-center py-16">
+                <p className="text-muted-foreground">Failed to load products. Please try again later.</p>
+              </div>
+            ) : filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                  <ProductCard key={product.node.id} product={product} />
                 ))}
               </div>
             ) : (
@@ -200,64 +106,92 @@ const Products = () => {
   );
 };
 
-function ProductCard({ product }: { product: Product }) {
-  const Icon = product.icon;
-  
+function ProductCard({ product }: { product: ShopifyProduct }) {
+  const addItem = useCartStore((state) => state.addItem);
+  const isLoading = useCartStore((state) => state.isLoading);
+  const imageUrl = product.node.images?.edges?.[0]?.node?.url;
+  const price = product.node.priceRange.minVariantPrice;
+  const selectedVariant = product.node.variants.edges[0]?.node;
+
+  const getCurrencySymbol = (currencyCode: string) => {
+    switch (currencyCode) {
+      case 'INR': return '₹';
+      case 'USD': return '$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      default: return currencyCode + ' ';
+    }
+  };
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!selectedVariant) return;
+    
+    await addItem({
+      product,
+      variantId: selectedVariant.id,
+      variantTitle: selectedVariant.title,
+      price: selectedVariant.price,
+      quantity: 1,
+      selectedOptions: selectedVariant.selectedOptions || []
+    });
+    
+    toast.success("Added to cart", {
+      description: product.node.title,
+    });
+  };
+
   return (
     <Link
-      to={`/product/${product.id}`}
-      className="group relative bg-card rounded-2xl p-6 border border-border shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1"
+      to={`/product/${product.node.handle}`}
+      className="group relative bg-card rounded-2xl overflow-hidden border border-border shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1"
     >
-      {/* Badges */}
-      <div className="absolute top-4 right-4 flex gap-2">
-        {product.popular && (
-          <span className="px-3 py-1 rounded-full gradient-accent text-accent-foreground text-xs font-semibold">
-            Popular
-          </span>
-        )}
-        {product.new && (
-          <span className="px-3 py-1 rounded-full bg-foreground text-background text-xs font-semibold">
-            New
-          </span>
+      {/* Product Image */}
+      <div className="aspect-[4/3] bg-secondary/10 overflow-hidden">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={product.node.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <ShoppingBag className="w-12 h-12 text-muted-foreground" />
+          </div>
         )}
       </div>
-      
-      {/* Icon */}
-      <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center mb-5 group-hover:bg-accent/20 transition-colors">
-        <Icon className="w-7 h-7 text-accent" />
-      </div>
 
-      {/* Category */}
-      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-        {product.category}
-      </span>
+      <div className="p-6">
+        {/* Title */}
+        <h3 className="font-heading font-semibold text-lg text-foreground mb-2 line-clamp-2 group-hover:text-accent transition-colors">
+          {product.node.title}
+        </h3>
 
-      {/* Title */}
-      <h3 className="font-heading font-semibold text-xl text-foreground mt-2 mb-3 group-hover:text-accent transition-colors">
-        {product.title}
-      </h3>
+        {/* Description */}
+        <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-2">
+          {product.node.description}
+        </p>
 
-      {/* Description */}
-      <p className="text-muted-foreground text-sm leading-relaxed mb-5">
-        {product.description}
-      </p>
-
-      {/* Price & CTA */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="font-heading font-bold text-2xl text-foreground">
-            {product.price}
+        {/* Price & CTA */}
+        <div className="flex items-center justify-between">
+          <span className="font-heading font-bold text-xl text-foreground">
+            {getCurrencySymbol(price.currencyCode)}{parseFloat(price.amount).toFixed(0)}
           </span>
-          {product.originalPrice && (
-            <span className="text-sm text-muted-foreground line-through">
-              {product.originalPrice}
-            </span>
-          )}
+          <Button
+            variant="accent"
+            size="sm"
+            onClick={handleAddToCart}
+            disabled={isLoading || !selectedVariant}
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Add to Cart"
+            )}
+          </Button>
         </div>
-        <span className="text-accent text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-          View Details
-          <ArrowRight className="w-4 h-4" />
-        </span>
       </div>
     </Link>
   );

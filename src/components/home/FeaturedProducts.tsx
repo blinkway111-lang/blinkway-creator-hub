@@ -1,63 +1,15 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, Bot, FileText, Settings, Palette, TrendingUp } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-interface Product {
-  id: string;
-  title: string;
-  description: string;
-  price: string;
-  category: string;
-  icon: LucideIcon;
-  popular?: boolean;
-}
-const featuredProducts: Product[] = [{
-  id: "1",
-  title: "AI Prompt Mastery Pack",
-  description: "500+ high-converting prompts for ChatGPT, Claude, and more. Boost productivity instantly.",
-  price: "₹999",
-  category: "AI Templates",
-  icon: Bot,
-  popular: true
-}, {
-  id: "2",
-  title: "SaaS Launch Blueprint",
-  description: "Complete framework to validate, build, and launch your SaaS product in 30 days.",
-  price: "₹1,499",
-  category: "Business PDFs",
-  icon: TrendingUp
-}, {
-  id: "3",
-  title: "Notion Automation Hub",
-  description: "Ready-to-use Notion templates with built-in automation for teams and solopreneurs.",
-  price: "₹799",
-  category: "Automation",
-  icon: Settings
-}, {
-  id: "4",
-  title: "Content Creator Toolkit",
-  description: "Templates, calendars, and frameworks for consistent content creation across platforms.",
-  price: "₹599",
-  category: "Creator Toolkits",
-  icon: Palette
-}, {
-  id: "5",
-  title: "Digital Marketing Playbook",
-  description: "Proven strategies and templates for growing your audience and converting leads.",
-  price: "₹1,299",
-  category: "Business PDFs",
-  icon: FileText
-}, {
-  id: "6",
-  title: "AI Workflow Automations",
-  description: "Pre-built AI workflows for common business tasks. Save 10+ hours weekly.",
-  price: "₹1,199",
-  category: "AI Templates",
-  icon: Sparkles,
-  popular: true
-}];
+import { ArrowRight, Loader2, ShoppingBag } from "lucide-react";
+import { useShopifyProducts, ShopifyProduct } from "@/hooks/useShopifyProducts";
+import { useCartStore } from "@/stores/cartStore";
+import { toast } from "sonner";
+
 export function FeaturedProducts() {
-  return <section className="py-24 bg-background">
+  const { data: products, isLoading, error } = useShopifyProducts(6);
+
+  return (
+    <section className="py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -73,9 +25,25 @@ export function FeaturedProducts() {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {featuredProducts.map(product => <ProductCard key={product.id} product={product} />)}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="w-8 h-8 animate-spin text-accent" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <p className="text-muted-foreground">Failed to load products. Please try again later.</p>
+          </div>
+        ) : products && products.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {products.map((product) => (
+              <ProductCard key={product.node.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <p className="text-muted-foreground">No products found.</p>
+          </div>
+        )}
 
         {/* View All CTA */}
         <div className="text-center">
@@ -87,46 +55,97 @@ export function FeaturedProducts() {
           </Button>
         </div>
       </div>
-    </section>;
+    </section>
+  );
 }
-function ProductCard({
-  product
-}: {
-  product: Product;
-}) {
-  const Icon = product.icon;
-  return <Link to={`/product/${product.id}`} className="group relative bg-card rounded-2xl p-6 border border-border shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1">
-      {product.popular && <div className="absolute top-4 right-4 px-3 py-1 rounded-full gradient-accent text-accent-foreground text-xs font-semibold">
-          Popular
-        </div>}
-      
-      {/* Icon */}
-      <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center mb-5 group-hover:bg-accent/20 transition-colors">
-        <Icon className="w-7 h-7 text-accent" />
+
+function ProductCard({ product }: { product: ShopifyProduct }) {
+  const addItem = useCartStore((state) => state.addItem);
+  const isLoading = useCartStore((state) => state.isLoading);
+  const imageUrl = product.node.images?.edges?.[0]?.node?.url;
+  const price = product.node.priceRange.minVariantPrice;
+  const selectedVariant = product.node.variants.edges[0]?.node;
+
+  const getCurrencySymbol = (currencyCode: string) => {
+    switch (currencyCode) {
+      case 'INR': return '₹';
+      case 'USD': return '$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      default: return currencyCode + ' ';
+    }
+  };
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!selectedVariant) return;
+    
+    await addItem({
+      product,
+      variantId: selectedVariant.id,
+      variantTitle: selectedVariant.title,
+      price: selectedVariant.price,
+      quantity: 1,
+      selectedOptions: selectedVariant.selectedOptions || []
+    });
+    
+    toast.success("Added to cart", {
+      description: product.node.title,
+    });
+  };
+
+  return (
+    <Link
+      to={`/product/${product.node.handle}`}
+      className="group relative bg-card rounded-2xl overflow-hidden border border-border shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1"
+    >
+      {/* Product Image */}
+      <div className="aspect-[4/3] bg-secondary/10 overflow-hidden">
+        {imageUrl ? (
+          <img
+            src={imageUrl}
+            alt={product.node.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <ShoppingBag className="w-12 h-12 text-muted-foreground" />
+          </div>
+        )}
       </div>
 
-      {/* Category */}
-      <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-        {product.category}
-      </span>
+      <div className="p-6">
+        {/* Title */}
+        <h3 className="font-heading font-semibold text-lg text-foreground mb-2 line-clamp-2 group-hover:text-accent transition-colors">
+          {product.node.title}
+        </h3>
 
-      {/* Title */}
-      <h3 className="font-heading font-semibold text-xl text-foreground mt-2 mb-3 group-hover:text-accent transition-colors">
-        {product.title}
-      </h3>
+        {/* Description */}
+        <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-2">
+          {product.node.description}
+        </p>
 
-      {/* Description */}
-      <p className="text-muted-foreground text-sm leading-relaxed mb-5">
-        {product.description}
-      </p>
-
-      {/* Price & CTA */}
-      <div className="flex items-center justify-between">
-        
-        <span className="text-accent text-sm font-medium flex items-center gap-1 group-hover:gap-2 transition-all">
-          View Details
-          <ArrowRight className="w-4 h-4" />
-        </span>
+        {/* Price & CTA */}
+        <div className="flex items-center justify-between">
+          <span className="font-heading font-bold text-xl text-foreground">
+            {getCurrencySymbol(price.currencyCode)}{parseFloat(price.amount).toFixed(0)}
+          </span>
+          <Button
+            variant="accent"
+            size="sm"
+            onClick={handleAddToCart}
+            disabled={isLoading || !selectedVariant}
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Add to Cart"
+            )}
+          </Button>
+        </div>
       </div>
-    </Link>;
+    </Link>
+  );
 }
