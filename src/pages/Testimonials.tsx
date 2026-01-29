@@ -115,7 +115,7 @@ const Testimonials = () => {
         <section className="pb-16">
           <div className="container mx-auto px-4 lg:px-8">
             <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {featuredTestimonials.map(testimonial => <div key={testimonial.id} className="bg-primary text-primary-foreground rounded-3xl p-8 relative overflow-hidden">
+              {featuredTestimonials.map(testimonial => <div key={testimonial.id} className="gradient-hero text-primary-foreground rounded-3xl p-8 relative overflow-hidden">
                   <Quote className="absolute top-6 right-6 w-16 h-16 text-primary-foreground/10" />
                   
                   <div className="flex gap-1 mb-6">
