@@ -151,7 +151,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
 // Cart Mutations
 const CART_QUERY = `
   query cart($id: ID!) {
-    cart(id: $id) { id totalQuantity }
+    cart(id: $id) { id totalQuantity checkoutUrl }
   }
 `;
 
@@ -346,10 +346,14 @@ export async function removeLineFromShopifyCart(cartId: string, lineId: string):
   return { success: true };
 }
 
-export async function syncCartWithShopify(cartId: string): Promise<{ exists: boolean; totalQuantity: number }> {
+export async function syncCartWithShopify(cartId: string): Promise<{ exists: boolean; totalQuantity: number; checkoutUrl: string | null }> {
   const data = await storefrontApiRequest(CART_QUERY, { id: cartId });
-  if (!data) return { exists: false, totalQuantity: 0 };
+  if (!data) return { exists: false, totalQuantity: 0, checkoutUrl: null };
   const cart = data?.data?.cart;
-  if (!cart) return { exists: false, totalQuantity: 0 };
-  return { exists: true, totalQuantity: cart.totalQuantity };
+  if (!cart) return { exists: false, totalQuantity: 0, checkoutUrl: null };
+  return { 
+    exists: true, 
+    totalQuantity: cart.totalQuantity, 
+    checkoutUrl: cart.checkoutUrl ? formatCheckoutUrl(cart.checkoutUrl) : null 
+  };
 }
