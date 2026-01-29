@@ -93,7 +93,7 @@ const Testimonials = () => {
         {/* Stats */}
         <section className="pb-16">
           <div className="container mx-auto px-4 lg:px-8 flex justify-center">
-            <div className="flex flex-wrap justify-center items-center gap-6">
+            <div className="flex-wrap gap-6 flex items-center justify-center">
               <div className="bg-card rounded-2xl p-6 border border-border text-center">
                 <div className="font-heading font-bold text-4xl text-accent mb-2">10K+</div>
                 <div className="text-muted-foreground">Happy Customers</div>
