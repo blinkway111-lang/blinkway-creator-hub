@@ -1,10 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
-
 export function CTASection() {
-  return (
-    <section className="py-24 bg-background relative overflow-hidden">
+  return <section className="py-24 bg-background relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full bg-accent/10 blur-[120px]"></div>
 
@@ -36,11 +34,10 @@ export function CTASection() {
           </Button>
 
           {/* Trust Note */}
-          <p className="mt-6 text-sm text-muted-foreground">
-            ✓ Instant delivery · ✓ Lifetime access · ✓ 30-day money-back guarantee
-          </p>
+          <p className="mt-6 text-sm text-primary">✓ Instant delivery · ✓ Lifetime access · ✓ Lifetime Value Products
+
+        </p>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 }
