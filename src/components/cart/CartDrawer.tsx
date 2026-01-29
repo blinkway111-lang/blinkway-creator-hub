@@ -6,6 +6,29 @@ import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
 
+// Shopify store permanent domain for checkout URL rewriting
+const SHOPIFY_STORE_PERMANENT_DOMAIN = '0rwdcy-wu.myshopify.com';
+
+// Rewrite checkout URL to use the myshopify.com domain instead of the custom domain
+// (blinkway.org is serving the Lovable app, so /cart/c/... would 404 there)
+function ensureShopifyDomain(url: string): string {
+  try {
+    const parsed = new URL(url);
+    const host = parsed.hostname;
+    const isShopifyHosted = host === 'checkout.shopify.com' || host.endsWith('.myshopify.com');
+    if (!isShopifyHosted) {
+      parsed.hostname = SHOPIFY_STORE_PERMANENT_DOMAIN;
+      parsed.protocol = 'https:';
+    }
+    if (!parsed.searchParams.has('channel')) {
+      parsed.searchParams.set('channel', 'online_store');
+    }
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, checkoutUrl } = useCartStore();
@@ -17,17 +40,21 @@ export const CartDrawer = () => {
   }, [isOpen, syncCart]);
 
   const handleCheckout = () => {
-    const url = checkoutUrl || getCheckoutUrl();
-    console.log('Checkout URL:', url);
+    const rawUrl = checkoutUrl || getCheckoutUrl();
+    console.log('Raw Checkout URL:', rawUrl);
     
-    if (!url) {
+    if (!rawUrl) {
       toast.error("Checkout unavailable", {
         description: "Please try removing items and adding them again."
       });
       return;
     }
+
+    // Always rewrite URL to myshopify.com domain (fixes stale cached URLs)
+    const finalUrl = ensureShopifyDomain(rawUrl);
+    console.log('Final Checkout URL:', finalUrl);
     
-    window.open(url, '_blank');
+    window.open(finalUrl, '_blank');
     setIsOpen(false);
   };
 
