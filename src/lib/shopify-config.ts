@@ -3,7 +3,7 @@
 
 export const SHOPIFY_CONFIG = {
   API_VERSION: '2025-07',
-  STORE_PERMANENT_DOMAIN: '0rwdcy-wu.myshopify.com',
+  STORE_PERMANENT_DOMAIN: 'shop.blinkway.org',
   STOREFRONT_TOKEN: 'b36672f2e4197bebd42b2814bf63ed6c',
 } as const;
 
