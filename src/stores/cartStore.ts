@@ -136,6 +136,9 @@ export const useCartStore = create<CartStore>()(
           const result = await syncCartWithShopify(cartId);
           if (!result.exists || result.totalQuantity === 0) {
             clearCart();
+          } else if (result.checkoutUrl) {
+            // Update checkout URL with fresh value from Shopify
+            set({ checkoutUrl: result.checkoutUrl });
           }
         } catch (error) {
           console.error('Failed to sync cart with Shopify:', error);
