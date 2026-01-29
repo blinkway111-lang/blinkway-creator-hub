@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Zap } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo.png";
 
 const navLinks = [
   { name: "Products", href: "/products" },
@@ -21,8 +22,8 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-lg gradient-cta flex items-center justify-center shadow-glow transition-transform group-hover:scale-105">
-              <Zap className="w-5 h-5 text-accent-foreground" />
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+              <img src={logo} alt="Blinkway Logo" className="w-8 h-8 object-contain" />
             </div>
             <span className="font-heading font-bold text-xl text-foreground">
               Blinkway
