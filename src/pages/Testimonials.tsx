@@ -107,7 +107,7 @@ const Testimonials = () => {
         {/* Stats */}
         <section className="pb-16">
           <div className="container mx-auto px-4 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto place-items-center">
               <div className="bg-card rounded-2xl p-6 border border-border text-center">
                 <div className="font-heading font-bold text-4xl text-accent mb-2">10K+</div>
                 <div className="text-muted-foreground">Happy Customers</div>
