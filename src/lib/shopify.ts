@@ -249,6 +249,19 @@ function formatCheckoutUrl(checkoutUrl: string): string {
   try {
     const url = new URL(checkoutUrl);
     url.searchParams.set('channel', 'online_store');
+
+    // IMPORTANT:
+    // Shopify may return checkout URLs on the store's *primary* domain.
+    // If that primary domain is also pointing to this Lovable app (e.g. blinkway.org),
+    // opening the URL will hit our React Router and produce a 404.
+    // To prevent this, force non-Shopify hosts to the permanent *.myshopify.com domain.
+    const host = url.hostname;
+    const isShopifyHosted = host === 'checkout.shopify.com' || host.endsWith('.myshopify.com');
+    if (!isShopifyHosted) {
+      url.hostname = SHOPIFY_STORE_PERMANENT_DOMAIN;
+      url.protocol = 'https:';
+    }
+
     return url.toString();
   } catch {
     return checkoutUrl;
