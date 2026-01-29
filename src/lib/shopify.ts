@@ -1,10 +1,9 @@
 import { toast } from "sonner";
-
-// Shopify Configuration
-const SHOPIFY_API_VERSION = '2025-07';
-const SHOPIFY_STORE_PERMANENT_DOMAIN = '0rwdcy-wu.myshopify.com';
-const SHOPIFY_STOREFRONT_URL = `https://${SHOPIFY_STORE_PERMANENT_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
-const SHOPIFY_STOREFRONT_TOKEN = 'b36672f2e4197bebd42b2814bf63ed6c';
+import { 
+  SHOPIFY_CONFIG, 
+  SHOPIFY_STOREFRONT_URL, 
+  ensureShopifyCheckoutDomain 
+} from "./shopify-config";
 
 // Types
 export interface ShopifyProduct {
@@ -204,7 +203,7 @@ export async function storefrontApiRequest(query: string, variables: Record<stri
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_TOKEN
+      'X-Shopify-Storefront-Access-Token': SHOPIFY_CONFIG.STOREFRONT_TOKEN
     },
     body: JSON.stringify({
       query,
@@ -244,28 +243,9 @@ export async function fetchProductByHandle(handle: string): Promise<ShopifyProdu
   return data?.data?.productByHandle || null;
 }
 
-// Cart helper functions
+// Cart helper functions - use centralized config
 function formatCheckoutUrl(checkoutUrl: string): string {
-  try {
-    const url = new URL(checkoutUrl);
-    url.searchParams.set('channel', 'online_store');
-
-    // IMPORTANT:
-    // Shopify may return checkout URLs on the store's *primary* domain.
-    // If that primary domain is also pointing to this Lovable app (e.g. blinkway.org),
-    // opening the URL will hit our React Router and produce a 404.
-    // To prevent this, force non-Shopify hosts to the permanent *.myshopify.com domain.
-    const host = url.hostname;
-    const isShopifyHosted = host === 'checkout.shopify.com' || host.endsWith('.myshopify.com');
-    if (!isShopifyHosted) {
-      url.hostname = SHOPIFY_STORE_PERMANENT_DOMAIN;
-      url.protocol = 'https:';
-    }
-
-    return url.toString();
-  } catch {
-    return checkoutUrl;
-  }
+  return ensureShopifyCheckoutDomain(checkoutUrl);
 }
 
 interface UserError {

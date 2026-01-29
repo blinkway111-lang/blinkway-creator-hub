@@ -2,42 +2,32 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
+import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2, RefreshCw } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
 import { toast } from "sonner";
-
-// Shopify store permanent domain for checkout URL rewriting
-const SHOPIFY_STORE_PERMANENT_DOMAIN = '0rwdcy-wu.myshopify.com';
-
-// Rewrite checkout URL to use the myshopify.com domain instead of the custom domain
-// (blinkway.org is serving the Lovable app, so /cart/c/... would 404 there)
-function ensureShopifyDomain(url: string): string {
-  try {
-    const parsed = new URL(url);
-    const host = parsed.hostname;
-    const isShopifyHosted = host === 'checkout.shopify.com' || host.endsWith('.myshopify.com');
-    if (!isShopifyHosted) {
-      parsed.hostname = SHOPIFY_STORE_PERMANENT_DOMAIN;
-      parsed.protocol = 'https:';
-    }
-    if (!parsed.searchParams.has('channel')) {
-      parsed.searchParams.set('channel', 'online_store');
-    }
-    return parsed.toString();
-  } catch {
-    return url;
-  }
-}
+import { ensureShopifyCheckoutDomain, isShopifyHostedUrl } from "@/lib/shopify-config";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, checkoutUrl } = useCartStore();
+  const [checkoutFailed, setCheckoutFailed] = useState(false);
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, checkoutUrl, clearCart } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
   useEffect(() => { 
-    if (isOpen) syncCart(); 
+    if (isOpen) {
+      syncCart();
+      setCheckoutFailed(false); // Reset on open
+    }
   }, [isOpen, syncCart]);
+
+  const handleResetCart = () => {
+    clearCart();
+    setCheckoutFailed(false);
+    toast.success("Cart reset", {
+      description: "Your cart has been cleared. Add items again to create a fresh checkout."
+    });
+  };
 
   const handleCheckout = () => {
     const rawUrl = checkoutUrl || getCheckoutUrl();
@@ -47,11 +37,21 @@ export const CartDrawer = () => {
       toast.error("Checkout unavailable", {
         description: "Please try removing items and adding them again."
       });
+      setCheckoutFailed(true);
       return;
     }
 
+    // Detect dangerous URL (non-Shopify host like blinkway.org)
+    if (!isShopifyHostedUrl(rawUrl)) {
+      console.warn('Checkout URL is not on a Shopify domain:', rawUrl);
+      toast.warning("Checkout URL issue detected", {
+        description: "Shopify is returning a non-Shopify checkout URL. This usually means blinkway.org is still set as the primary domain in Shopify Admin → Settings → Domains. The URL has been rewritten to myshopify.com.",
+        duration: 8000,
+      });
+    }
+
     // Always rewrite URL to myshopify.com domain (fixes stale cached URLs)
-    const finalUrl = ensureShopifyDomain(rawUrl);
+    const finalUrl = ensureShopifyCheckoutDomain(rawUrl);
     console.log('Final Checkout URL:', finalUrl);
     
     window.open(finalUrl, '_blank');
@@ -177,6 +177,19 @@ export const CartDrawer = () => {
                     </>
                   )}
                 </Button>
+                
+                {/* Reset cart button - visible when checkout fails or for troubleshooting */}
+                {checkoutFailed && (
+                  <Button 
+                    onClick={handleResetCart} 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full text-muted-foreground"
+                  >
+                    <RefreshCw className="w-3 h-3 mr-2" />
+                    Reset Cart (troubleshooting)
+                  </Button>
+                )}
               </div>
             </>
           )}
