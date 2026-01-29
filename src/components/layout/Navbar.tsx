@@ -23,11 +23,9 @@ export function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
-              <img src={logo} alt="Blinkway Logo" className="w-8 h-8 object-contain" />
+              <img src={logo} alt="Blinkway Logo" className="w-12 h-12 object-contain" />
             </div>
-            <span className="font-heading font-bold text-xl text-foreground">
-              Blinkway
-            </span>
+            <span className="font-heading font-bold text-xl text-foreground">Blinkway</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -38,9 +36,7 @@ export function Navbar() {
                 to={link.href}
                 className={cn(
                   "text-sm font-medium transition-colors hover:text-accent",
-                  location.pathname === link.href
-                    ? "text-accent"
-                    : "text-muted-foreground"
+                  location.pathname === link.href ? "text-accent" : "text-muted-foreground",
                 )}
               >
                 {link.name}
@@ -56,10 +52,7 @@ export function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 text-foreground"
-          >
+          <button onClick={() => setIsOpen(!isOpen)} className="md:hidden p-2 text-foreground">
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -75,9 +68,7 @@ export function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className={cn(
                     "text-base font-medium transition-colors py-2",
-                    location.pathname === link.href
-                      ? "text-accent"
-                      : "text-muted-foreground"
+                    location.pathname === link.href ? "text-accent" : "text-muted-foreground",
                   )}
                 >
                   {link.name}
