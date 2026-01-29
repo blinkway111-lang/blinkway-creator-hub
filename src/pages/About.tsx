@@ -3,6 +3,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Target, Sparkles, Heart } from "lucide-react";
+import aboutLogo from "@/assets/about-logo.png";
 
 const values = [
   {
@@ -77,8 +78,8 @@ const About = () => {
                 </div>
                 <div className="relative">
                   <div className="aspect-square rounded-3xl gradient-hero flex items-center justify-center">
-                    <div className="w-24 h-24 rounded-2xl gradient-cta flex items-center justify-center shadow-glow animate-float">
-                      <Zap className="w-12 h-12 text-accent-foreground" />
+                  <div className="w-24 h-24 rounded-2xl gradient-cta flex items-center justify-center shadow-glow animate-float">
+                      <img src={aboutLogo} alt="Blinkway Logo" className="w-12 h-12 object-contain" />
                     </div>
                   </div>
                 </div>
