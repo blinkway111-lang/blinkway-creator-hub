@@ -4,10 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingCart, Minus, Plus, Trash2, ExternalLink, Loader2 } from "lucide-react";
 import { useCartStore } from "@/stores/cartStore";
+import { toast } from "sonner";
 
 export const CartDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart } = useCartStore();
+  const { items, isLoading, isSyncing, updateQuantity, removeItem, getCheckoutUrl, syncCart, checkoutUrl } = useCartStore();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (parseFloat(item.price.amount) * item.quantity), 0);
 
@@ -16,11 +17,18 @@ export const CartDrawer = () => {
   }, [isOpen, syncCart]);
 
   const handleCheckout = () => {
-    const checkoutUrl = getCheckoutUrl();
-    if (checkoutUrl) {
-      window.open(checkoutUrl, '_blank');
-      setIsOpen(false);
+    const url = checkoutUrl || getCheckoutUrl();
+    console.log('Checkout URL:', url);
+    
+    if (!url) {
+      toast.error("Checkout unavailable", {
+        description: "Please try removing items and adding them again."
+      });
+      return;
     }
+    
+    window.open(url, '_blank');
+    setIsOpen(false);
   };
 
   const getCurrencySymbol = (currencyCode: string) => {
