@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Zap, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import logoWhite from "@/assets/logo-white.png";
 
 const footerLinks = {
   products: [
@@ -28,9 +29,9 @@ export function Footer() {
           {/* Brand Column */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-2 mb-4">
-              <div className="w-9 h-9 rounded-lg gradient-cta flex items-center justify-center">
-                <Zap className="w-5 h-5 text-accent-foreground" />
-              </div>
+            <div className="w-9 h-9 rounded-lg flex items-center justify-center">
+              <img src={logoWhite} alt="Blinkway Logo" className="w-12 h-12 object-contain" />
+            </div>
               <span className="font-heading font-bold text-xl">Blinkway</span>
             </Link>
             <p className="text-primary-foreground/70 text-sm leading-relaxed mb-6">
