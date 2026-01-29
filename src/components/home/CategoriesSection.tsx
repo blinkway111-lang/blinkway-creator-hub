@@ -89,9 +89,7 @@ function CategoryCard({
             <h3 className="font-heading font-semibold text-lg text-foreground group-hover:text-accent transition-colors">
               {category.name}
             </h3>
-            <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded-full font-sans text-center font-thin">
-              {category.productCount} products
-            </span>
+            
           </div>
           <p className="text-muted-foreground text-sm leading-relaxed">
             {category.description}
