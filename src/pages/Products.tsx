@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Search, Loader2, ShoppingBag } from "lucide-react";
+import { ArrowRight, Search, Loader2, ShoppingBag, Download } from "lucide-react";
 import { useShopifyProducts, ShopifyProduct } from "@/hooks/useShopifyProducts";
 import { useCartStore } from "@/stores/cartStore";
+import { createDirectCheckout } from "@/lib/shopify";
 import { toast } from "sonner";
 
 const categoryFilters = [
@@ -108,7 +109,8 @@ const Products = () => {
 
 function ProductCard({ product }: { product: ShopifyProduct }) {
   const addItem = useCartStore((state) => state.addItem);
-  const isLoading = useCartStore((state) => state.isLoading);
+  const isCartLoading = useCartStore((state) => state.isLoading);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const imageUrl = product.node.images?.edges?.[0]?.node?.url;
   const price = product.node.priceRange.minVariantPrice;
   const selectedVariant = product.node.variants.edges[0]?.node;
@@ -143,6 +145,28 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
     });
   };
 
+  const handleDirectCheckout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!selectedVariant) return;
+    
+    setIsCheckoutLoading(true);
+    try {
+      const checkoutUrl = await createDirectCheckout(selectedVariant.id, 1);
+      if (checkoutUrl) {
+        window.open(checkoutUrl, '_blank');
+      } else {
+        toast.error("Failed to create checkout");
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast.error("Failed to create checkout");
+    } finally {
+      setIsCheckoutLoading(false);
+    }
+  };
+
   return (
     <Link
       to={`/product/${product.node.handle}`}
@@ -175,22 +199,40 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
         </p>
 
         {/* Price & CTA */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3">
           <span className="font-heading font-bold text-xl text-foreground">
             {getCurrencySymbol(price.currencyCode)}{parseFloat(price.amount).toFixed(0)}
           </span>
-          <Button
-            variant="accent"
-            size="sm"
-            onClick={handleAddToCart}
-            disabled={isLoading || !selectedVariant}
-          >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              "Add to Cart"
-            )}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="accent"
+              size="sm"
+              className="flex-1"
+              onClick={handleDirectCheckout}
+              disabled={isCheckoutLoading || !selectedVariant}
+            >
+              {isCheckoutLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <>
+                  <Download className="w-4 h-4" />
+                  Download Now
+                </>
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleAddToCart}
+              disabled={isCartLoading || !selectedVariant}
+            >
+              {isCartLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <ShoppingBag className="w-4 h-4" />
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </Link>
