@@ -51,7 +51,7 @@ export function TestimonialsSection() {
           </div>
           <div>
             
-            <div className="text-primary-foreground/70">Products</div>
+            
           </div>
           <div>
             <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">98%</div>
