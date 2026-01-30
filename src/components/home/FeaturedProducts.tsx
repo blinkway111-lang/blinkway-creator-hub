@@ -66,7 +66,13 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const imageUrl = product.node.images?.edges?.[0]?.node?.url;
   const price = product.node.priceRange.minVariantPrice;
+  const compareAtPrice = product.node.compareAtPriceRange?.minVariantPrice;
   const selectedVariant = product.node.variants.edges[0]?.node;
+
+  const currentPrice = parseFloat(price.amount);
+  const originalPrice = compareAtPrice ? parseFloat(compareAtPrice.amount) : null;
+  const hasDiscount = originalPrice && originalPrice > currentPrice;
+  const discountPercent = hasDiscount ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
 
   const getCurrencySymbol = (currencyCode: string) => {
     switch (currencyCode) {
@@ -126,7 +132,14 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
       className="group relative bg-card rounded-2xl overflow-hidden border border-border shadow-card hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1"
     >
       {/* Product Image */}
-      <div className="aspect-[4/3] bg-secondary/10 overflow-hidden">
+      <div className="aspect-[4/3] bg-secondary/10 overflow-hidden relative">
+        {hasDiscount && (
+          <div className="absolute top-3 left-3 z-10">
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-500 text-white shadow-lg">
+              -{discountPercent}% OFF
+            </span>
+          </div>
+        )}
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -153,9 +166,21 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
 
         {/* Price & CTA */}
         <div className="flex flex-col gap-3">
-          <span className="font-heading font-bold text-xl text-foreground">
-            {getCurrencySymbol(price.currencyCode)}{parseFloat(price.amount).toFixed(0)}
-          </span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="font-heading font-bold text-xl text-foreground">
+              {getCurrencySymbol(price.currencyCode)}{currentPrice.toFixed(0)}
+            </span>
+            {hasDiscount && (
+              <>
+                <span className="text-muted-foreground line-through text-sm">
+                  {getCurrencySymbol(price.currencyCode)}{originalPrice.toFixed(0)}
+                </span>
+                <span className="text-red-500 text-sm font-semibold">
+                  Save {discountPercent}%
+                </span>
+              </>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <Button
               variant="accent"
