@@ -46,7 +46,7 @@ export function TestimonialsSection() {
         {/* Stats */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
-            <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">2K+</div>
+            <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">20K+</div>
             <div className="text-primary-foreground/70">Downloads</div>
           </div>
           <div>
