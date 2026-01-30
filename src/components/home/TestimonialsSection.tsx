@@ -50,7 +50,7 @@ export function TestimonialsSection() {
             <div className="text-primary-foreground/70">Downloads</div>
           </div>
           <div>
-            <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">50+</div>
+            
             <div className="text-primary-foreground/70">Products</div>
           </div>
           <div>
