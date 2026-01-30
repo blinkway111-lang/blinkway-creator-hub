@@ -71,8 +71,10 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
 
   const currentPrice = parseFloat(price.amount);
   const originalPrice = compareAtPrice ? parseFloat(compareAtPrice.amount) : null;
-  const hasDiscount = originalPrice && originalPrice > currentPrice;
-  const discountPercent = hasDiscount ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
+  const discountPercent = originalPrice && originalPrice > currentPrice 
+    ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) 
+    : 0;
+  const hasDiscount = discountPercent > 0;
 
   const getCurrencySymbol = (currencyCode: string) => {
     switch (currencyCode) {
