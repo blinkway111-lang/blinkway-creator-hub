@@ -1,0 +1,12 @@
+export { ProductHero } from './ProductHero';
+export { PainPointsSection } from './PainPointsSection';
+export { TransformationSection } from './TransformationSection';
+export { ProductIntroSection } from './ProductIntroSection';
+export { WhatYouGetSection } from './WhatYouGetSection';
+export { WhoIsThisForSection } from './WhoIsThisForSection';
+export { TrustSection } from './TrustSection';
+export { OfferStackSection } from './OfferStackSection';
+export { GuaranteeSection } from './GuaranteeSection';
+export { FinalCTASection } from './FinalCTASection';
+export { ProductFAQSection } from './ProductFAQSection';
+export { StickyMobileCTA } from './StickyMobileCTA';
