@@ -1,5 +1,4 @@
 import { Star, Quote } from "lucide-react";
-
 interface Testimonial {
   id: string;
   content: string;
@@ -7,34 +6,27 @@ interface Testimonial {
   role: string;
   rating: number;
 }
-
-const testimonials: Testimonial[] = [
-  {
-    id: "1",
-    content: "Blinkway saved me weeks of work. Everything is clean, practical, and easy to implement. The AI templates alone paid for themselves on day one.",
-    author: "Sarah Chen",
-    role: "Startup Founder",
-    rating: 5,
-  },
-  {
-    id: "2",
-    content: "These are not generic digital products. Each one delivers real value. I use the automation workflows daily and they've transformed how my team operates.",
-    author: "Marcus Johnson",
-    role: "Marketing Director",
-    rating: 5,
-  },
-  {
-    id: "3",
-    content: "I use Blinkway tools daily. Highly recommended for anyone serious about growth. The quality is exceptional and the support is outstanding.",
-    author: "Priya Sharma",
-    role: "Content Creator",
-    rating: 5,
-  },
-];
-
+const testimonials: Testimonial[] = [{
+  id: "1",
+  content: "Blinkway saved me weeks of work. Everything is clean, practical, and easy to implement. The AI templates alone paid for themselves on day one.",
+  author: "Sarah Chen",
+  role: "Startup Founder",
+  rating: 5
+}, {
+  id: "2",
+  content: "These are not generic digital products. Each one delivers real value. I use the automation workflows daily and they've transformed how my team operates.",
+  author: "Marcus Johnson",
+  role: "Marketing Director",
+  rating: 5
+}, {
+  id: "3",
+  content: "I use Blinkway tools daily. Highly recommended for anyone serious about growth. The quality is exceptional and the support is outstanding.",
+  author: "Priya Sharma",
+  role: "Content Creator",
+  rating: 5
+}];
 export function TestimonialsSection() {
-  return (
-    <section className="py-24 gradient-hero text-primary-foreground">
+  return <section className="py-24 gradient-hero text-primary-foreground">
       <div className="container mx-auto px-4 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -48,15 +40,13 @@ export function TestimonialsSection() {
 
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} testimonial={testimonial} />
-          ))}
+          {testimonials.map(testimonial => <TestimonialCard key={testimonial.id} testimonial={testimonial} />)}
         </div>
 
         {/* Stats */}
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           <div>
-            <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">10K+</div>
+            <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">2K+</div>
             <div className="text-primary-foreground/70">Downloads</div>
           </div>
           <div>
@@ -73,21 +63,20 @@ export function TestimonialsSection() {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 }
-
-function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
-  return (
-    <div className="bg-primary-foreground/5 backdrop-blur-sm rounded-2xl p-8 border border-primary-foreground/10 hover:border-accent/30 transition-colors">
+function TestimonialCard({
+  testimonial
+}: {
+  testimonial: Testimonial;
+}) {
+  return <div className="bg-primary-foreground/5 backdrop-blur-sm rounded-2xl p-8 border border-primary-foreground/10 hover:border-accent/30 transition-colors">
       {/* Quote Icon */}
       <Quote className="w-10 h-10 text-accent mb-6" />
 
       {/* Rating */}
       <div className="flex gap-1 mb-4">
-        {[...Array(testimonial.rating)].map((_, i) => (
-          <Star key={i} className="w-5 h-5 fill-accent text-accent" />
-        ))}
+        {[...Array(testimonial.rating)].map((_, i) => <Star key={i} className="w-5 h-5 fill-accent text-accent" />)}
       </div>
 
       {/* Content */}
@@ -104,6 +93,5 @@ function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
           {testimonial.role}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 }
