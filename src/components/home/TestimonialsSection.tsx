@@ -49,10 +49,7 @@ export function TestimonialsSection() {
             <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">20K+</div>
             <div className="text-primary-foreground/70">Downloads</div>
           </div>
-          <div>
-            
-            
-          </div>
+          
           <div>
             <div className="font-heading font-bold text-4xl md:text-5xl text-accent mb-2">98%</div>
             <div className="text-primary-foreground/70">Satisfaction</div>
