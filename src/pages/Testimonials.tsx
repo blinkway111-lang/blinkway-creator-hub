@@ -159,7 +159,7 @@ const Testimonials = () => {
                   <div className="border-t border-border pt-4">
                     <div className="font-semibold text-foreground">{testimonial.author}</div>
                     <div className="text-sm text-muted-foreground">{testimonial.role}</div>
-                    <div className="text-xs text-accent mt-1">{testimonial.product}</div>
+                    
                   </div>
                 </div>)}
             </div>
