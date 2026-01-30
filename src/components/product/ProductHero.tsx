@@ -21,6 +21,64 @@ const getCurrencySymbol = (currencyCode: string) => {
   }
 };
 
+// Parse and render formatted description
+const FormattedDescription = ({ text }: { text: string }) => {
+  // Split by common patterns - newlines, or between emoji markers
+  const lines = text
+    .split(/(?=✅|📘|📌|🎁|📈|💡|🚀)|(?<=\.)(?=\s*[A-Z])|(?:(?<=:)\s*)/)
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+
+  const renderLine = (line: string, index: number) => {
+    // Check if it's a bullet point (starts with emoji)
+    const bulletEmojis = ['✅', '📘', '📌', '🎁', '📈', '💡'];
+    const startsWithBullet = bulletEmojis.some(emoji => line.startsWith(emoji));
+    
+    // Check if it's a heading-like line (ends with ":" or contains key phrases)
+    const isHeading = /^(Inside|Perfect for|What You'll Get|This isn't theory)/i.test(line) ||
+                      (line.endsWith(':') && line.length < 50);
+    
+    // Intro line with rocket
+    if (line.startsWith('🚀')) {
+      return (
+        <p key={index} className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-6">
+          {line}
+        </p>
+      );
+    }
+
+    if (isHeading) {
+      return (
+        <h3 key={index} className="font-heading font-semibold text-xl md:text-2xl text-foreground mt-6 mb-3">
+          {line}
+        </h3>
+      );
+    }
+
+    if (startsWithBullet) {
+      return (
+        <div key={index} className="flex items-start gap-3 mb-2">
+          <span className="text-lg flex-shrink-0">{line.slice(0, 2)}</span>
+          <span className="text-muted-foreground">{line.slice(2).trim()}</span>
+        </div>
+      );
+    }
+
+    // Regular paragraph
+    return (
+      <p key={index} className="text-muted-foreground leading-relaxed mb-4">
+        {line}
+      </p>
+    );
+  };
+
+  return (
+    <div className="text-left max-w-2xl mx-auto">
+      {lines.map((line, index) => renderLine(line, index))}
+    </div>
+  );
+};
+
 export function ProductHero({ 
   title, 
   description, 
@@ -101,9 +159,9 @@ export function ProductHero({
           </div>
 
           {/* 4. Description */}
-          <p className="text-muted-foreground text-lg md:text-xl leading-relaxed mb-8 text-center max-w-2xl">
-            {description}
-          </p>
+          <div className="mb-8 w-full">
+            <FormattedDescription text={description} />
+          </div>
 
           {/* Quick Features */}
           <div className="flex flex-col gap-3">
