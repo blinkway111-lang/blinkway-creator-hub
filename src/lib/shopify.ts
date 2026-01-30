@@ -350,3 +350,20 @@ export async function syncCartWithShopify(cartId: string): Promise<{ exists: boo
     checkoutUrl: cart.checkoutUrl ? formatCheckoutUrl(cart.checkoutUrl) : null 
   };
 }
+
+// Direct checkout - creates cart and returns checkout URL immediately
+export async function createDirectCheckout(variantId: string, quantity: number = 1): Promise<string | null> {
+  const data = await storefrontApiRequest(CART_CREATE_MUTATION, {
+    input: { lines: [{ quantity, merchandiseId: variantId }] },
+  });
+
+  if (data?.data?.cartCreate?.userErrors?.length > 0) {
+    console.error('Direct checkout failed:', data.data.cartCreate.userErrors);
+    return null;
+  }
+
+  const cart = data?.data?.cartCreate?.cart;
+  if (!cart?.checkoutUrl) return null;
+
+  return formatCheckoutUrl(cart.checkoutUrl);
+}
