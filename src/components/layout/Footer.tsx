@@ -52,8 +52,16 @@ export function Footer() {
               <span className="font-heading text-xl font-thin">BLINKWAY</span>
             </Link>
             <p className="text-footer-foreground/70 text-sm leading-relaxed mb-6">
-              Premium digital products including PDFs, SaaS tools, AI templates, 
-              and automation resources—built for speed, clarity, and growth.
+              Premium digital products including PDFs, SaaS tools, AI templates, and automation resources—built for speed, clarity, and growth.
+
+GSTIN : 05EUKPK2994D1ZF
+Address: 103-Chowmandi, Roorkee, 247667 , INDIA  
+
+
+
+
+
+
             </p>
             <div className="flex items-center gap-2 text-sm text-footer-foreground/70">
               <Mail className="w-4 h-4" />
