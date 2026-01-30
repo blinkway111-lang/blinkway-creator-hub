@@ -164,7 +164,7 @@ export function ProductHero({
           </div>
 
           {/* Quick Features */}
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-row flex-wrap justify-center gap-4 md:gap-6">
             {features.map((feature, index) => (
               <div key={index} className="flex items-center gap-3">
                 <div className="w-5 h-5 rounded-full gradient-cta flex items-center justify-center flex-shrink-0">
