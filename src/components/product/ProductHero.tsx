@@ -131,7 +131,12 @@ export function ProductHero({
             {title}
           </h1>
 
-          {/* 3. Price & Buy Button */}
+          {/* 3. Description */}
+          <div className="mb-8 w-full">
+            <FormattedDescription text={description} />
+          </div>
+
+          {/* 4. Price & Buy Button */}
           <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
             <div className="text-center sm:text-left">
               <span className="font-heading font-bold text-4xl md:text-5xl text-foreground">
@@ -156,11 +161,6 @@ export function ProductHero({
                 </>
               )}
             </Button>
-          </div>
-
-          {/* 4. Description */}
-          <div className="mb-8 w-full">
-            <FormattedDescription text={description} />
           </div>
 
           {/* Quick Features */}
